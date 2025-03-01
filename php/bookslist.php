@@ -4,16 +4,23 @@ include ('library_db.php');
 
 $search_query = '';
 if (isset($_POST['search'])) {
-    $search_query = mysqli_real_escape_string($mysqli, $_POST['search']);
+    $search_query = $_POST['search'];
 }
 
-$sql = "SELECT * FROM Books WHERE available = '1'";
+$sql = 'SELECT * FROM AvailableBooks';
 
-if (!empty($search_query)) {
-    $sql .= " AND (title LIKE '%$search_query%' OR author LIKE '%$search_query%')";
+if (empty($search_query)) {
+    $stmt = mysqli_prepare($mysqli, $sql);
+} else {
+    $sql .= ' WHERE title LIKE ? OR author LIKE ?';
+    $search = '%' . $_POST['search'] . '%';
+    $stmt = mysqli_prepare($mysqli, $sql);
+    mysqli_stmt_bind_param($stmt, 'ss', $search, $search);
 }
 
-$result = mysqli_query($mysqli, $sql);
+$stmt->execute();
+$result = $stmt->get_result();
+
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +32,6 @@ $result = mysqli_query($mysqli, $sql);
 <body>
     <h1>Available Books</h1>
 
-    
     <form method="post" action="">
         <input type="text" name="search" placeholder="Search by title or author" value="<?php echo htmlspecialchars($search_query); ?>">
         <button type="submit">Search</button>

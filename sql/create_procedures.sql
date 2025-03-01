@@ -4,12 +4,11 @@ CREATE PROCEDURE InsertBook(
     IN p_isbn VARCHAR(20),
     IN p_title VARCHAR(255),
     IN p_author VARCHAR(255),
-    IN p_publication_date DATE,
-    IN p_available BOOLEAN
+    IN p_publication_date DATE
 )
 BEGIN
     INSERT INTO Books (isbn, title, author, publication_date, available)
-    VALUES (p_isbn, p_title, p_author, p_publication_date, p_available);
+    VALUES (p_isbn, p_title, p_author, p_publication_date, TRUE);
 END $$
 
 CREATE PROCEDURE DeleteBook(
@@ -23,13 +22,12 @@ CREATE PROCEDURE InsertUser(
     IN p_first_name VARCHAR(100),
     IN p_last_name VARCHAR(100),
     IN p_email VARCHAR(255),
-    IN p_phone VARCHAR(20),
-    IN p_role ENUM('student', 'faculty', 'staff'),
-    IN p_active BOOLEAN
+    IN p_password VARCHAR(255),
+    IN p_role VARCHAR(5)
 )
 BEGIN
-    INSERT INTO Users (first_name, last_name, email, phone, role, active)
-    VALUES (p_first_name, p_last_name, p_email, p_phone, p_role, p_active);
+    INSERT INTO Users (first_name, last_name, email, password, role)
+    VALUES (p_first_name, p_last_name, p_email, p_password, p_role);
 END $$
 
 CREATE PROCEDURE DeleteUser(

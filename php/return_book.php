@@ -8,28 +8,24 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$loan_id = isset($_GET['id']) ? $_GET['id'] : 0;
 
-$sql = "SELECT books.isbn, books.title, books.author, loans.id FROM Loans JOIN books ON loans.book_isbn = books.isbn
-        WHERE loans.user_id = ? AND loans.returned_date is NULL ";
-$stmt = mysqli_prepare($mysqli , $sql);
- mysqli_stmt_bind_param($stmt,"i",$loan_id );
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$loan = mysqli_fetch_assoc($result);
+if (isset($_GET['id'])) {
+    $loan_id = $_GET['id'];
+    $return_date = date('Y-m-d');
+    $sql_update_loan = 'UPDATE Loans SET returned_date = ? WHERE id = ? AND user_id = ?;';
+    $stmt = mysqli_prepare($mysqli, $sql_update_loan);
+    mysqli_stmt_bind_param($stmt, 'sii', $return_date, $loan_id, $user_id);
+    mysqli_stmt_execute($stmt);
 
-if (!$loan) {
-    echo 'Invalid loan record.';
-    exit();
+    $message = 'You have returned the book successfully.';
 }
 
-$return_date = date('Y-m-d');
-$sql_update_loan = "UPDATE Loans SET returned_date = ? WHERE id = ? AND books_isbn = ?";
-$stmt = mysqli_prepare($mysqli , $sql_update_loan);
-mysqli_stmt_bind_param($stmt,"sii",$return_date, $loan_id, $book_isbn);
+$sql = 'SELECT Books.isbn, Books.title, Books.author, Loans.id FROM Loans JOIN Books ON Loans.book_isbn = Books.isbn
+        WHERE Loans.user_id = ? AND Loans.returned_date is NULL ';
+$stmt = mysqli_prepare($mysqli, $sql);
+mysqli_stmt_bind_param($stmt, 'i', $user_id);
 mysqli_stmt_execute($stmt);
-
-$message = "You have returned the book successfully.";
+$result = mysqli_stmt_get_result($stmt);
 
 ?>
 
@@ -42,17 +38,17 @@ $message = "You have returned the book successfully.";
 </head>
 <body>
     <h1>Return Books </h1>
-    <?php if (isset($message)){
-        echo $message;} ?> 
+    <?php if (isset($message)) {
+        echo $message;
+    } ?>
     <h2>Books You Borrowed: </h2>
     <?php if ($result->num_rows > 0): ?>
         <ul>
-    <?php while($row = mysqli_fetch_assoc($result)): ?>
+    <?php while ($row = mysqli_fetch_assoc($result)): ?>
         <li>
             <?php echo htmlspecialchars($row['title']); ?>
-            <form action ="return_book.php" method = "POST">
-                <input type = "hidden" name = "loan_id" value = "<?php echo $row['loan_id'];?>">
-                <input type = "hidden" name = "return_book_id" value ="<?php echo $row['id'];?>">
+            <form action ="return_book.php" method="get">
+                <input type = "hidden" name = "id" value = "<?php echo $row['id']; ?>">
                 <button type = "submit">Return</button>
             </form>
         </li>
@@ -61,8 +57,5 @@ $message = "You have returned the book successfully.";
         <?php else: ?>
             <p> No Books are Borrowed. </p>
         <?php endif; ?>
-
-    
-    
 </body>
 </html>

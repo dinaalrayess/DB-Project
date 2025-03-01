@@ -39,5 +39,18 @@ BEGIN
     RETURN loan_count;
 END $$
 
+CREATE FUNCTION GetFullName(p_user_id INT)
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE full_name VARCHAR(255);
+
+    SELECT CONCAT(first_name, ' ', last_name) INTO full_name
+    FROM Users
+    WHERE id = p_user_id;
+
+    RETURN full_name;
+END $$
+
 DELIMITER ;
 
