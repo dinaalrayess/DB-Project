@@ -1,23 +1,19 @@
 <?php
 session_start();
-include('library_db.php');
-
+include ('library_db.php');
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    echo "You need to be an admin to access this page.";
+    echo 'You need to be an admin to access this page.';
     exit;
 }
 
-
-$sql_users = "SELECT * FROM users";
+$sql_users = 'SELECT * FROM users';
 $result_users = mysqli_query($mysqli, $sql_users);
 
-
-$sql_books = "SELECT * FROM books";
+$sql_books = 'SELECT * FROM books';
 $result_books = mysqli_query($mysqli, $sql_books);
 
-
-$sql_loans = "SELECT * FROM loans WHERE returned_date IS NULL";
+$sql_loans = 'SELECT * FROM loans WHERE returned_date IS NULL';
 $result_loans = mysqli_query($mysqli, $sql_loans);
 ?>
 

@@ -1,17 +1,15 @@
 <?php
 session_start();
-include('library_db.php');
+include ('library_db.php');
 
 $search_query = '';
 if (isset($_POST['search'])) {
-    $search_query = mysqli_real_escape_string($mysqli, $_POST['search']); 
+    $search_query = mysqli_real_escape_string($mysqli, $_POST['search']);
 }
 
-
-$sql = "SELECT * FROM books WHERE available = '1'";
+$sql = "SELECT * FROM Books WHERE available = '1'";
 
 if (!empty($search_query)) {
-    
     $sql .= " AND (title LIKE '%$search_query%' OR author LIKE '%$search_query%')";
 }
 
@@ -38,13 +36,13 @@ $result = mysqli_query($mysqli, $sql);
         echo '<ul>';
         while ($row = mysqli_fetch_assoc($result)) {
             echo '<li>';
-            echo '<a href="book_details.php?id=' . $row['id'] . '">' . $row['title'] . '</a>';
-            echo ' - <a href="borrow.php?id=' . $row['id'] . '">Borrow</a>';
+            echo '<a href="book_details.php?id=' . $row['isbn'] . '">' . $row['title'] . '</a>';
+            echo ' - <a href="borrow.php?id=' . $row['isbn'] . '">Borrow</a>';
             echo '</li>';
         }
         echo '</ul>';
     } else {
-        echo "No books found matching your search.";
+        echo 'No books found matching your search.';
     }
     ?>
 

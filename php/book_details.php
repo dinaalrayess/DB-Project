@@ -1,20 +1,21 @@
 <?php
 session_start();
-include('library_db.php');
+include ('library_db.php');
 
 if (isset($_GET['id'])) {
     $book_id = $_GET['id'];
 
-    
-    $sql = "SELECT * FROM books WHERE id = '$book_id'";
-    $result = mysqli_query($mysqli, $sql);
-    $book = mysqli_fetch_assoc($result);
+    $stmt = $mysqli->prepare('SELECT * FROM Books WHERE isbn = ?');
+    $stmt->bind_param('i', $book_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $book = $result->fetch_assoc();
 
     if (!$book) {
-        echo "Book not found!";
+        echo 'Book not found!';
         exit;
     }
-} 
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +33,7 @@ if (isset($_GET['id'])) {
     <p><strong>Status:</strong> <?php echo $book['available'] ? 'Available' : 'Not Available'; ?></p>
 
     <?php if ($book['available']): ?>
-        <a href="borrow.php?id=<?php echo $book['id']; ?>">Borrow this book</a>
+        <a href="borrow.php?id=<?php echo $book['isbn']; ?>">Borrow this book</a>
     <?php else: ?>
         <p>This book is currently unavailable.</p>
     <?php endif; ?>
