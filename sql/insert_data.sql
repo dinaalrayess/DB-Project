@@ -1,3 +1,5 @@
+USE BookDB;
+
 INSERT INTO
   Books (isbn, title, author, publication_date, available)
 VALUES

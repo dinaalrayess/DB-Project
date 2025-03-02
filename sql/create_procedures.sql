@@ -1,3 +1,5 @@
+USE BookDB;
+
 DELIMITER $$
 
 CREATE PROCEDURE InsertBook(

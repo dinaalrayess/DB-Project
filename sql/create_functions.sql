@@ -1,3 +1,5 @@
+USE BookDB;
+
 DELIMITER $$
 
 CREATE FUNCTION GetBookTitleByISBN(p_isbn VARCHAR(20))

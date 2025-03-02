@@ -1,3 +1,5 @@
+USE BookDB;
+
 DELIMITER $$
 
 CREATE TRIGGER books_update_timestamp BEFORE

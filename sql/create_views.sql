@@ -1,3 +1,5 @@
+USE BookDB;
+
 CREATE VIEW AvailableBooks AS
 SELECT
   isbn,
