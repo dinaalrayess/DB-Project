@@ -10,8 +10,11 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $book_id = isset($_GET['id']) ? $_GET['id'] : 0;
 
-$sql = "SELECT * FROM Books WHERE isbn = \"$book_id\" AND available = true;";
-$result = mysqli_query($mysqli, $sql);
+$sql = 'SELECT * FROM AvailableBooks WHERE isbn = ?;';
+$stmt = mysqli_prepare($mysqli, $sql);
+mysqli_stmt_bind_param($stmt, 's', $book_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 $book = mysqli_fetch_assoc($result);
 
 if (!$book) {
@@ -21,8 +24,10 @@ if (!$book) {
 
 $due_date = date('Y-m-d', strtotime('+7 days'));
 
-$sql = "INSERT INTO Loans (user_id, book_isbn, checkout_date, due_date) VALUES ($user_id, \"$book_id\", CURDATE(), '$due_date')";
-$result = mysqli_query($mysqli, $sql);
+$sql = 'CALL InsertLoan(?, ?, CURDATE(), ?)';
+$stmt = mysqli_prepare($mysqli, $sql);
+mysqli_stmt_bind_param($stmt, 'iss', $user_id, $book_id, $due_date);
+$result = mysqli_stmt_execute($stmt);
 
 if ($result) {
     echo 'You have successfully borrowed the book. Due date: ' . $due_date;

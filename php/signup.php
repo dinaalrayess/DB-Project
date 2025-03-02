@@ -1,32 +1,35 @@
 <?php
 
-require("library_db.php");
+require ('library_db.php');
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $first_name = $_POST["first_name"];
-    $last_name = $_POST["last_name"];
-    $email = $_POST["email"];
-    $role = $_POST["role"];
-    $password = $_POST["password"];
-    
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-    
-    if (empty($first_name) || empty($last_name) || empty($email)  || empty($role) || empty($password)) {
-        echo "All fields are required!";
-    } 
+    if (empty($first_name) || empty($last_name) || empty($email) || empty($password)) {
+        echo 'All fields are required!';
+    } else {
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $role = $_POST['role'];
 
-            $stmt = $mysqli->prepare("INSERT INTO Users (first_name, last_name, email, role, password) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssss", $first_name, $last_name, $email, $role, $password);
+        $sql = 'CALL InsertUser(?, ?, ?, ?, "user")';
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param('ssss', $first_name, $last_name, $email, $password);
 
-            if ($stmt->execute()) {
-                header("Location: login.php");
-                exit();
-            } else {
-                echo "Error registering user!";
-            }
+        if ($stmt->execute()) {
+            header('Location: login.php');
+            exit();
+        } else {
+            echo 'Error registering user!';
         }
-    
+    }
+}
 
 ?>
 
@@ -49,19 +52,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label>Email:</label>
         <input type="email" name="email" required><br>
 
-        <label>Role:</label>
-        <select name="role" required>
-            <option value="user">Student</option>
-            <option value="admin">Admin</option>
-        </select><br>
-
         <label>Password:</label>
         <input type="password" name="password" required><br>
 
 
         <button type="submit">Sign Up</button>
     </form>
-    <p>Already have an account? <a href="login.php">Login here</a></p>
+    <p>Already have an account? Login <a href="login.php">here</a></p>
 </body>
 </html>
 

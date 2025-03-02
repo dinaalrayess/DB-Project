@@ -9,8 +9,13 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-if (isset($_GET['id'])) {
-    $loan_id = $_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (empty($_POST['id'])) {
+        echo 'Invalid request.';
+        exit();
+    }
+
+    $loan_id = $_POST['id'];
     $return_date = date('Y-m-d');
     $sql_update_loan = 'UPDATE Loans SET returned_date = ? WHERE id = ? AND user_id = ?;';
     $stmt = mysqli_prepare($mysqli, $sql_update_loan);
@@ -47,7 +52,7 @@ $result = mysqli_stmt_get_result($stmt);
     <?php while ($row = mysqli_fetch_assoc($result)): ?>
         <li>
             <?php echo htmlspecialchars($row['title']); ?>
-            <form action ="return_book.php" method="get">
+            <form action ="return_book.php" method="post">
                 <input type = "hidden" name = "id" value = "<?php echo $row['id']; ?>">
                 <button type = "submit">Return</button>
             </form>

@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $first_name = $_POST['first_name'];
         $last_name = $_POST['last_name'];
         $email = $_POST['email'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $password = $_POST['password'];
         $role = $_POST['role'];
 
         $sql = 'CALL InsertUser(?, ?, ?, ?, ?)';
@@ -46,13 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $isbn = $_POST['isbn'];
         $title = $_POST['title'];
         $author = $_POST['author'];
-        $available = $_POST['available'];
         $publication_date = $_POST['publication_date'];
+        $publication_date = date('Y-m-d', strtotime($publication_date));
 
         // InsertBook procedure
-        $sql = 'CALL InsertBook
+        $sql = 'CALL InsertBook(?, ?, ?, ?)';
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param('sssi', $isbn, $title, $author, $available);
+        $stmt->bind_param('ssss', $isbn, $title, $author, $publication_date);
         $stmt->execute();
         $stmt->close();
     }
@@ -142,6 +142,16 @@ $result_loans = mysqli_query($mysqli, $sql_loans);
         <?php endwhile; ?>
     </table>
 
+    <h2>Create Book</h2>
+
+    <form method="post">
+        <input type="text" name="isbn" placeholder="ISBN" required>
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="author" placeholder="Author" required>
+        <input type="date" name="publication_date" placeholder="Publication Date" required>
+        <button type="submit" name="create_book">Create Book</button>
+    </form>
+
     <h2>Loans</h2>
     <table>
         <tr>
@@ -161,7 +171,7 @@ $result_loans = mysqli_query($mysqli, $sql_loans);
                 <td><?php echo htmlspecialchars($loan['book_isbn']); ?></td>
                 <td><?php echo htmlspecialchars($loan['checkout_date']); ?></td>
                 <td><?php echo htmlspecialchars($loan['due_date']); ?></td>
-                <td><?php echo htmlspecialchars($loan['returned_date']); ?></td>
+                <td><?php echo empty($loan['returned_date']) ? 'NULL' : htmlspecialchars($loan['returned_date']); ?></td>
                 <td><?php echo $loan['returned_date'] ? 'Yes' : 'No'; ?></td>
                 <td>
                     <form method="post">
