@@ -12,7 +12,9 @@ set PORT=3306
 )
 
 :: Get the directory of this script
-for %%I in ("%~dp0.") do set SCRIPT_DIR=%%~fI
+SET SCRIPT_DIR=%~dp0
+
+echo Script directory: %SCRIPT_DIR%
 
 :: Set log and SQL directories relative to the script directory
 set LOG_FILE=%SCRIPT_DIR%..\logs\MySQL_logs.log
